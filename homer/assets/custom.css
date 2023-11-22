@@ -1,0 +1,65 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+body .section .group-title {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+body .section .layout-vertical .group-title {
+  margin-bottom: 16px;
+}
+
+body .section .group-title .fas {
+  font-size: 20px;
+}
+
+body .column {
+  padding: 6px;
+}
+
+body .layout-vertical .column {
+  padding: 12px;
+}
+
+body .card {
+  border: 1px solid var(--highlight-primary);
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+  border-bottom-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+  box-shadow: 0 2px 5px 0 var(--card-shadow) !important;
+}
+
+body .layout-vertical .card {
+  margin-bottom: 12px;
+}
+
+body .card .card-content {
+  padding: 16px;
+  height: 80px;
+}
+
+body .card .image img {
+  max-height: 80%;
+}
+
+body .card .media-content .title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+body .card .media-content .subtitle {
+  padding-top: 4px;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+
+body .search-bar .search-label:before {
+  color: var(--text-header);
+}

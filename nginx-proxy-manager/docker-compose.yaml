@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  nginx-proxy-manager:
+    container_name: nginx-proxy-manager
+    image: jc21/nginx-proxy-manager:latest
+
+    networks:
+      - web
+
+    ports:
+      - 80:80
+      - 443:443
+      - ${PORT}:81
+
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      DISABLE_IPV6: ${DISABLE_IPV6}
+
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+
+    healthcheck:
+      test: [ "CMD", "/bin/check-health" ]
+      interval: 10s
+      timeout: 3s
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+
+    restart: unless-stopped

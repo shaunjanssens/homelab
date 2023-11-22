@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  uptime-kuma:
+    container_name: uptime-kuma
+    image: louislam/uptime-kuma
+
+    networks:
+      - web
+
+    ports:
+      - ${PORT}:3001
+
+    environment:
+      PUID: ${PUID}
+      PGID: ${DOCKER_PGID}
+      TZ: ${TZ}
+
+    volumes:
+      - ./data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+
+    restart: unless-stopped

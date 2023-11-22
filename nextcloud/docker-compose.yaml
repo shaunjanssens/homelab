@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+  nextcloud:
+    container_name: nextcloud
+    image: lscr.io/linuxserver/nextcloud:latest
+
+    networks:
+      - web
+      - nextcloud-internal
+
+    ports:
+      - ${PORT}:443
+
+    depends_on:
+      - nextcloud-db
+
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      UMASK: 22
+
+    volumes:
+      - ./config:/config
+      - ${DATADIR}:/data
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
+
+    restart: unless-stopped
+
+  nextcloud-db:
+    container_name: nextcloud-db
+    image: lscr.io/linuxserver/mariadb:latest
+
+    networks:
+      - nextcloud-internal
+
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      MYSQL_ROOT_PASSWORD: ${NEXTCLOUD_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+      MYSQL_PASSWORD: ${NEXTCLOUD_MYSQL_PASSWORD}
+
+    volumes:
+      - ./db:/config
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+
+    restart: unless-stopped
+
+networks:
+  nextcloud-internal:

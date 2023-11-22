@@ -1,0 +1,17 @@
+include:
+  - ./actual-budget/docker-compose.yaml
+  - ./cloudflare-ddns/docker-compose.yaml
+  - ./dozzle/docker-compose.yaml
+  - ./home-assistant/docker-compose.yaml
+  - ./homebox/docker-compose.yaml
+  - ./homer/docker-compose.yaml
+  - ./jellyfin/docker-compose.yaml
+  - ./mealie/docker-compose.yaml
+  - ./media-request/docker-compose.yaml
+  - ./nextcloud/docker-compose.yaml
+  - ./nginx-proxy-manager/docker-compose.yaml
+  - ./uptime-kuma/docker-compose.yaml
+
+networks:
+  web:
+    external: true

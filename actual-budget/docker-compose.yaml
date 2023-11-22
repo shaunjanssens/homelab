@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  actual-budget:
+    container_name: actual-budget
+    image: actualbudget/actual-server:latest
+
+    user: "${PUID}:${PGID}"
+
+    security_opt:
+      - no-new-privileges
+
+    networks:
+      - web
+
+    ports:
+      - ${PORT}:5006
+
+    volumes:
+      - ./data:/data
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+
+    restart: unless-stopped

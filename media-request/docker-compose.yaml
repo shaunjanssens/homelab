@@ -1,0 +1,378 @@
+version: "3.8"
+
+services:
+  ####################
+  # Gluetun VPN
+  ####################
+
+  gluetun:
+    container_name: gluetun
+    image: ghcr.io/qdm12/gluetun
+
+    networks:
+      - web
+
+    ports:
+      - ${PORT_GLUETUN}:8000
+      - ${PORT_TORRENT}:${PORT_TORRENT}
+      - ${PORT_PROWLARR}:9696
+      - ${PORT_RADARR}:7878
+      - ${PORT_SONARR}:8989
+      - ${PORT_READARR}:8787
+      - ${PORT_BAZARR}:6767
+      - ${PORT_FLARESOLVERR}:8191
+
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+
+      VPN_SERVICE_PROVIDER: ${VPN_SERVICE_PROVIDER}
+      OPENVPN_USER: ${VPN_USER}
+      OPENVPN_PASSWORD: ${VPN_PASSWORD}
+
+      SERVER_COUNTRIES: ${VPN_SERVER_COUNTRIES}
+
+    devices:
+      - /dev/net/tun:/dev/net/tun
+
+    volumes:
+      - ./gluetun:/gluetun
+
+    cap_add:
+      - NET_ADMIN
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 768M
+
+    restart: unless-stopped
+
+  ####################
+  # qBitTorrent
+  ####################
+
+  qbittorrent:
+    container_name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+
+    network_mode: service:gluetun
+
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      UMASK_SET: 22
+      WEBUI_PORT: ${PORT_TORRENT}
+
+    volumes:
+      - ./qbittorrent:/config
+      - ${DOWNLOADDIR}:/downloads
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+    restart: unless-stopped
+
+  ####################
+  # Prowlarr
+  ####################
+
+  prowlarr:
+    container_name: prowlarr
+    image: lscr.io/linuxserver/prowlarr:develop
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+      qbittorrent:
+        condition: service_started
+
+    network_mode: service:gluetun
+
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+
+    volumes:
+      - ./prowlarr:/config
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 600M
+
+    restart: unless-stopped
+
+  ####################
+  # Radarr
+  ####################
+
+  radarr:
+    container_name: radarr
+    image: lscr.io/linuxserver/radarr:latest
+
+    depends_on:
+      prowlarr:
+        condition: service_started
+      gluetun:
+        condition: service_healthy
+
+    network_mode: service:gluetun
+
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      UMASK: 22
+
+    volumes:
+      - ./radarr:/config
+      - ${DATADIR}:/data
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+    restart: unless-stopped
+
+  ####################
+  # Sonarr
+  ####################
+
+  sonarr:
+    container_name: sonarr
+    image: lscr.io/linuxserver/sonarr:latest
+
+    depends_on:
+      prowlarr:
+        condition: service_started
+      gluetun:
+        condition: service_healthy
+
+    network_mode: service:gluetun
+
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      UMASK: 22
+
+    volumes:
+      - ./sonarr:/config
+      - ${DATADIR}:/data
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+    restart: unless-stopped
+
+  ####################
+  # Readarr
+  ####################
+
+  readarr:
+    container_name: readarr
+    image: lscr.io/linuxserver/readarr:nightly
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+
+    network_mode: service:gluetun
+
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      UMASK: 22
+
+    volumes:
+      - ./readarr:/config
+      - ${DATADIR}:/data
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+
+    restart: unless-stopped
+
+  ####################
+  # Bazarr
+  ####################
+
+  bazarr:
+    container_name: bazarr
+    image: lscr.io/linuxserver/bazarr:latest
+
+    depends_on:
+      radarr:
+        condition: service_started
+      sonarr:
+        condition: service_started
+      gluetun:
+        condition: service_healthy
+
+    network_mode: service:gluetun
+
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      UMASK: 22
+
+    volumes:
+      - ./bazarr:/config
+      - ${MEDIADIR}:/data
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+
+    restart: unless-stopped
+
+  ####################
+  # Metube
+  ####################
+
+  metube:
+    container_name: metube
+    image: ghcr.io/alexta69/metube
+
+    networks:
+      - web
+
+    ports:
+      - ${PORT_METUBE}:8081
+
+    environment:
+      UID: ${PUID}
+      GID: ${PGID}
+      STATE_DIR: /config
+
+    volumes:
+      - ./metube:/config
+      - ${METUBEDIR}:/downloads
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+    restart: unless-stopped
+
+  ####################
+  # Podgrab
+  ####################
+
+  podgrab:
+    container_name: podgrab
+    image: akhilrex/podgrab
+
+    user: "${PUID}:${PGID}"
+
+    security_opt:
+      - no-new-privileges
+
+    networks:
+      - web
+
+    ports:
+      - ${PORT_PODGRAB}:8080
+
+    environment:
+      CHECK_FREQUENCY: 60
+
+    volumes:
+      - ./podgrab:/config
+      - ${PODGRABDIR}:/assets
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+
+    restart: unless-stopped
+
+  ####################
+  # Jellyseerr
+  ####################
+
+  jellyseerr:
+    container_name: jellyseerr
+    image: fallenbagel/jellyseerr:latest
+
+    user: "${PUID}:${PGID}"
+
+    security_opt:
+      - no-new-privileges
+
+    networks:
+      - web
+
+    ports:
+      - ${PORT_JELLYSEERR}:5055
+
+    environment:
+      TZ: ${TZ}
+
+    volumes:
+      - ./jellyseerr:/app/config
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+    restart: unless-stopped
+
+  ####################
+  # FlareSolverr
+  ####################
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+
+    network_mode: service:gluetun
+
+    environment:
+      - LOG_LEVEL=info
+      - LOG_HTML=false
+      - CAPTCHA_SOLVER=none
+      - TZ=${TZ}
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+
+    restart: unless-stopped
