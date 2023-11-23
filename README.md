@@ -107,6 +107,11 @@ To get an overview of all containers there's a dashboard (homer) included. This 
 
 ### Docker management
 
-This repository doesn't have a web interface for managing Docker containers. In my opinion it's better to learn the tooling provided by the maker instead of a web interface. This will benefit you the most when it all goes wrong.
+This repository doesn't have a web interface for managing Docker containers. If you do want a management tool then I can recommend [LazyDocker](https://github.com/jesseduffield/lazydocker).
 
-But, if you do want a management tool then I can recommend [LazyDocker](https://github.com/jesseduffield/lazydocker).
+## Roadmap
+
+- [ ] Change Cloudflare DDNS with [hotio/cloudflareddns](https://hotio.dev/containers/cloudflareddns/)
+- [ ] Add simple backup solution like [Duplicati](https://docs.linuxserver.io/images/docker-duplicati/)
+- [ ] Change [linuxserver/qbittorrent](https://docs.linuxserver.io/images/docker-qbittorrent/) with [hotio/qbittorrent](https://hotio.dev/containers/qbittorrent/) because it comes with a nicer UI
+- [ ] Add [Diun](https://crazymax.dev/diun/) for getting notifications when a Docker image is updated
