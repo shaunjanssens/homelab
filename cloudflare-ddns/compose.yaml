@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  cloudflare-ddns:
+    container_name: cloudflare-ddns
+    image: ghcr.io/hotio/cloudflareddns:latest
+
+    env_file:
+      - ../.env
+      - .env
+
+    restart: unless-stopped

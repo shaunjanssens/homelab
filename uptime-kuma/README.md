@@ -5,6 +5,10 @@ Used for monitoring containers and other services.
 - Website: https://uptime.kuma.pet/
 - Github: https://github.com/louislam/uptime-kuma
 
+## Application ports
+
+- Web: 3001
+
 ## Installation
 
 - Add Docker socket in `Settings > Docker Hosts > Setup Docker Host` to monitor Docker containers. `Docker Daemon: /var/run/docker.sock`

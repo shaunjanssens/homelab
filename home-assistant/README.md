@@ -6,6 +6,10 @@ Used for managing your smart home.
 - Github: https://github.com/home-assistant/core
 - Docker image: https://docs.linuxserver.io/images/docker-homeassistant/
 
+## Application ports
+
+- Web: 8123
+
 ## Reverse proxy
 
 Adding Home Assistant to Nginx Proxy Manager is different than other containers because the `netword_mode` is `host`.

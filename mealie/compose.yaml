@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  mealie:
+    container_name: mealie
+    image: ghcr.io/mealie-recipes/mealie:v1.0.0-RC2
+
+    env_file:
+      - ../.env
+      - .env
+
+    user: "${PUID}:${PGID}"
+
+    security_opt:
+      - no-new-privileges
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/mealie:/app/data
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped

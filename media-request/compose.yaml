@@ -1,0 +1,214 @@
+version: "3.8"
+
+services:
+  gluetun:
+    container_name: gluetun
+    image: ghcr.io/qdm12/gluetun
+
+    env_file:
+      - ../.env
+      - .env
+      - .gluetun.env
+
+#    ports:
+#      - 8000:8000 # Gluetun
+#      - 8080:8080 # Qbittorrent
+#      - 9696:9696 # Prowlarr
+#      - 7878:7878 # Radarr
+#      - 8989:8989 # Sonarr
+#      - 8787:8787 # Readarr
+#      - 6767:6767 # Bazarr
+#      - 8191:8191 # Flaresolverr
+
+    devices:
+      - /dev/net/tun:/dev/net/tun
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/gluetun:/gluetun
+
+    cap_add:
+      - NET_ADMIN
+
+    restart: unless-stopped
+
+  qbittorrent:
+    container_name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:latest
+
+    env_file:
+      - ../.env
+      - .env
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+
+    network_mode: service:gluetun
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/qbittorrent:/config
+      - ${STORAGE_LOCATION}/media/downloads:/data/downloads
+
+    restart: unless-stopped
+
+  prowlarr:
+    container_name: prowlarr
+    image: lscr.io/linuxserver/prowlarr:develop
+
+    env_file:
+      - ../.env
+      - .env
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+      qbittorrent:
+        condition: service_started
+
+    network_mode: service:gluetun
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/prowlarr:/config
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped
+
+  radarr:
+    container_name: radarr
+    image: lscr.io/linuxserver/radarr:latest
+
+    env_file:
+      - ../.env
+      - .env
+
+    depends_on:
+      prowlarr:
+        condition: service_started
+      gluetun:
+        condition: service_healthy
+
+    network_mode: service:gluetun
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/radarr:/config
+      - ${STORAGE_LOCATION}/media:/data
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped
+
+  sonarr:
+    container_name: sonarr
+    image: lscr.io/linuxserver/sonarr:latest
+
+    env_file:
+      - ../.env
+      - .env
+
+    depends_on:
+      prowlarr:
+        condition: service_started
+      gluetun:
+        condition: service_healthy
+
+    network_mode: service:gluetun
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/sonarr:/config
+      - ${STORAGE_LOCATION}/media:/data
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped
+
+  readarr:
+    container_name: readarr
+    image: lscr.io/linuxserver/readarr:nightly
+
+    env_file:
+      - ../.env
+      - .env
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+
+    network_mode: service:gluetun
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/readarr:/config
+      - ${STORAGE_LOCATION}/media:/data
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped
+
+  bazarr:
+    container_name: bazarr
+    image: lscr.io/linuxserver/bazarr:latest
+
+    env_file:
+      - ../.env
+      - .env
+
+    depends_on:
+      radarr:
+        condition: service_started
+      sonarr:
+        condition: service_started
+      gluetun:
+        condition: service_healthy
+
+    network_mode: service:gluetun
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/bazarr:/config
+      - ${STORAGE_LOCATION}/media:/data
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+
+    env_file:
+      - ../.env
+      - .env
+      - .flaresolverr.env
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+
+    network_mode: service:gluetun
+
+    restart: unless-stopped
+
+  jellyseerr:
+    container_name: jellyseerr
+    image: fallenbagel/jellyseerr:latest
+
+    env_file:
+      - ../.env
+      - .env
+
+    user: "${PUID}:${PGID}"
+
+    security_opt:
+      - no-new-privileges
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/jellyseerr:/app/config
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped

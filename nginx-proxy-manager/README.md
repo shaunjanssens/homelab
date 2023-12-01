@@ -5,6 +5,10 @@ Used for accessing your containers with a domain name.
 - Website: https://nginxproxymanager.com/
 - Github: https://github.com/NginxProxyManager/nginx-proxy-manager
 
+## Application ports
+
+- Web: 81
+
 ## Default credentials
 
 |          |                   |

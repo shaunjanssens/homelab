@@ -1,0 +1,19 @@
+version: "3.8"
+
+include:
+  - ./actual-budget/compose.yaml
+  - ./cloudflare-ddns/compose.yaml
+  - ./docker-volume-backup/compose.yaml
+  - ./dozzle/compose.yaml
+  - ./duplicati/compose.yaml
+  - ./home-assistant/compose.yaml
+  - ./homebox/compose.yaml
+  - ./homer/compose.yaml
+  - ./jellyfin/compose.yaml
+  - ./mealie/compose.yaml
+  - ./media-request/compose.yaml
+  - ./metube/compose.yaml
+  - ./nextcloud/compose.yaml
+  - ./nginx-proxy-manager/compose.yaml
+  - ./podgrab/compose.yaml
+  - ./uptime-kuma/compose.yaml

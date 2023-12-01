@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  uptime-kuma:
+    container_name: uptime-kuma
+    image: louislam/uptime-kuma
+
+    env_file:
+      - ../.env
+      - .env
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/uptime-kuma:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    restart: unless-stopped

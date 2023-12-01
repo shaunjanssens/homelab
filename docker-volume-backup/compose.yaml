@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  docker-volume-backup:
+    container_name: docker-volume-backup
+    image: offen/docker-volume-backup:latest
+
+    env_file:
+      - ../.env
+      - .env
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${BACKUP_LOCATION}:/archive
+      - ${DOCKER_DATA_LOCATION}:/backup:ro

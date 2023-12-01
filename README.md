@@ -12,9 +12,9 @@ Collection of Docker Compose files to easily install and manage your homelab. Th
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/nextcloud.png" width="24" /> Nextcloud           | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/radarr.png" width="24" /> Radarr*        | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/uptime-kuma.png" width="24" /> Uptime Kuma                 |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/homebox.png" width="24" /> Homebox               | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sonarr.png" width="24" /> Sonarr*        | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/gluetun.png" width="24" /> Gluetun                         |
 |                                                                                                                      | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bazarr.png" width="24" /> Bazarr*        | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cloudflare.png" width="24" /> CloudFlare DDNS              |
-|                                                                                                                      | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/readarr.png" width="24" /> Readarr*      | FlareSolverr                                                                                                                   |
-|                                                                                                                      | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/metube.png" width="24" /> Metube         |                                                                                                                                |
-|                                                                                                                      | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/podgrab.png" width="24" /> Podgrab       |                                                                                                                                |
+|                                                                                                                      | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/readarr.png" width="24" /> Readarr*      | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/duplicati.png" width="24" /> Duplicati                     |
+|                                                                                                                      | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/metube.png" width="24" /> Metube         | Docker Volume Backup                                                                                                           |
+|                                                                                                                      | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/podgrab.png" width="24" /> Podgrab       | FlareSolverr                                                                                                                   |
 
 Disclaimer: these containers are only used for managing legal Linux distro's. 
 
@@ -29,14 +29,18 @@ Disclaimer: these containers are only used for managing legal Linux distro's.
 ```
 ├── /opt
 │  └── homelab (this repo)
-│     └── homelab-docker (this repo)
-|        ├── application folder
-│        |  └── .env
-│        |  └── docker-compose.yaml
-│        |  └── * (config & data)
-│        |     └── *
-│        ├── .env
-│        └── docker-compose.yaml
+|     ├── application folder
+│     |  └── .env
+│     |  └── compose.yaml
+|     └── compose.yaml
+├── /srv
+│  └── homelab (docker data)
+|  |  └── application folder
+│  |     └── * (config & data folder)
+│  |        └── *
+|  └── backup
+|      └── volume (backups by docker-volume-backup)
+|      └── duplicati (backups by duplicati)
 └── /mnt/storage (media storage)
    ├── nextcloud
    ├── downloads
@@ -48,14 +52,7 @@ Disclaimer: these containers are only used for managing legal Linux distro's.
       ├── movies
       ├── podcasts
       ├── tv
-      └── youtube
-```
-
-### Change ownership of media storage
-
-```shell
-$ sudo chown -R $USER:$USER /mnt/storage
-$ sudo chmod -R a=,a+rX,u+w,g+w /mnt/storage
+      └── metube
 ```
 
 ## Installation
@@ -69,7 +66,7 @@ $ git clone https://github.com/shaunjanssens/homelab
 
 ### Change `.env` files for all containers
 
-Each container has it's own `.env` file with container specific config. Some only have the exposed port, others have more config. Each container contains and `README.md` with more info.
+Each container has it's own `.env` file with container specific config. Each container contains and `README.md` with more info.
 
 #### Getting user and group ID
 
@@ -81,13 +78,25 @@ $ id
 
 The output of this command should be something like `uid=1000(homelabuser) gid=1000(homelabuser) groups=1000(homelabuser),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),105(lxd),994(docker)` when `1000` is your user and group id and `994` your Docker group.
 
-### Create a shared network
+### Create data directories for all containers
 
 ```shell
-$ docker network create -d bridge web
+$ sudo mkdir /srv/homelab
+$ cd /srv/homelab
+$ sudo mkdir {actual-budget,duplicati,home-assistant,homebox,homer,jellyfin,mealie,gluetun,qbittorrent,prowlarr,radarr,sonarr,readarr,bazarr,jellyseerr,metube,nextcloud,nextcloud-db,nginx-proxy-manager,podgrab,uptime-kuma}
+```
+
+### Change ownership of data and media directories
+
+```shell
+$ sudo chown -R $USER:$USER /srv/homelab
+$ sudo chown -R $USER:$USER /media/storage
+$ sudo chmod -R a=,a+rX,u+w,g+w /media/storage
 ```
 
 ### Start all containers
+
+Change directory to the stack you want to start.
 
 ```shell
 $ docker compose up -d
@@ -99,19 +108,19 @@ It's possible to access all apps with the server IP and container port but Nginx
 
 ## Dashboard
 
-To get an overview of all containers there's a dashboard (homer) included. This dashboard needs some configuration to view all containers. There's also a custom theme included. [dashboard-icons](https://github.com/walkxcode/dashboard-icons) is used for app icons but it's also possible to use own images.
+To get an overview of all containers there's a dashboard (homer) included. This dashboard needs some configuration to view all containers. There's also a custom theme included. [dashboard-icons](https://github.com/walkxcode/dashboard-icons) is used for app icons but it's also possible to use own images. A custom theme file is located at `homer/assets/custom.css`.
 
 ![Screenshot of Homer dashboard](assets/dashboard.jpg)
 
+## Backup and restore
+
+All Docker container config data is stored in `/srv/homelab` and is backed up every night to `/srv/backup/volume`. Duplicati is also installed to backup other data like media storage and Nextcloud data.
+
 ## Recommendations
 
-### Docker management
-
-This repository doesn't have a web interface for managing Docker containers. If you do want a management tool then I can recommend [LazyDocker](https://github.com/jesseduffield/lazydocker).
+- [LazyDocker](https://github.com/jesseduffield/lazydocker) for managing Docker containers
+- [btop](https://github.com/aristocratos/btop) for monitoring server resources
 
 ## Roadmap
 
-- [ ] Change Cloudflare DDNS with [hotio/cloudflareddns](https://hotio.dev/containers/cloudflareddns/)
-- [ ] Add simple backup solution like [Duplicati](https://docs.linuxserver.io/images/docker-duplicati/)
-- [ ] Change [linuxserver/qbittorrent](https://docs.linuxserver.io/images/docker-qbittorrent/) with [hotio/qbittorrent](https://hotio.dev/containers/qbittorrent/) because it comes with a nicer UI
 - [ ] Add [Diun](https://crazymax.dev/diun/) for getting notifications when a Docker image is updated

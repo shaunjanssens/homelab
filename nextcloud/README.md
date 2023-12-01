@@ -6,6 +6,10 @@ Used for file storage and more.
 - Github: https://github.com/nextcloud
 - Docker image: https://docs.linuxserver.io/images/docker-nextcloud
 
+## Application ports
+
+- Web: 443 (https)
+
 ## Notes
 
 - Make sure that the owner of `DATADIR` is the same user as `PUID:PGID`.

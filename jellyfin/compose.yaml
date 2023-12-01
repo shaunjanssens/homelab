@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  jellyfin:
+    container_name: jellyfin
+    image: lscr.io/linuxserver/jellyfin:latest
+
+    env_file:
+      - ../.env
+      - .env
+
+    ports:
+      - 8096:8096
+      - 7359:7359/udp # Optional - Allows clients to discover Jellyfin on the local network.
+      - 1901:1900/udp # Optional - Service discovery used by DNLA and clients. 1901 because Home Assistant also use DLNA
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/jellyfin:/config
+      - ${STORAGE_LOCATION}/media:/data
+
+    devices:
+      - /dev/dri:/dev/dri
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped

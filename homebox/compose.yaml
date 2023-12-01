@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  homebox:
+    container_name: homebox
+    image: ghcr.io/hay-kot/homebox:latest-rootless
+
+    env_file:
+      - ../.env
+      - .env
+
+    user: "${PUID}:${PGID}"
+
+    security_opt:
+      - no-new-privileges
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/homebox:/data
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped

@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  homer:
+    container_name: homer
+    image: b4bz/homer
+
+    env_file:
+      - ../.env
+      - .env
+
+    user: "${PUID}:${PGID}"
+
+    security_opt:
+      - no-new-privileges
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/homer:/www/assets
+
+    restart: unless-stopped

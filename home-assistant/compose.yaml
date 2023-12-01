@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  home-assistant:
+    container_name: home-assistant
+    image: lscr.io/linuxserver/homeassistant:latest
+
+    env_file:
+      - ../.env
+      - .env
+
+    network_mode: host # To enable automatic discovery of new devices
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/home-assistant:/config
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped

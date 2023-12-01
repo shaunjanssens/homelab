@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  nginx-proxy-manager:
+    container_name: nginx-proxy-manager
+    image: jc21/nginx-proxy-manager:latest
+
+    env_file:
+      - ../.env
+      - .env
+
+    ports:
+      - 80:80
+      - 443:443
+      - 81:81
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/nginx-proxy-manager/data:/data
+      - ${DOCKER_DATA_LOCATION}/nginx-proxy-manager/letsencrypt:/etc/letsencrypt
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    healthcheck:
+      test: [ "CMD", "/bin/check-health" ]
+      interval: 10s
+      timeout: 3s
+
+    restart: unless-stopped

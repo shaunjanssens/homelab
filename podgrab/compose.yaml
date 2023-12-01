@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  podgrab:
+    container_name: podgrab
+    image: akhilrex/podgrab
+
+    env_file:
+      - ../.env
+      - .env
+
+    user: "${PUID}:${PGID}"
+
+    security_opt:
+      - no-new-privileges
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/podgrab:/config
+      - ${STORAGE_LOCATION}/media/downloaded/podcasts:/assets
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped

@@ -4,6 +4,8 @@ Use Servarr and TRaSH guides for setting up qBitTorrent, Prowlarr, Radarr, Sonar
 
 ## Gluetun
 
+Used for connecting containers with a VPN
+
 - Github: https://github.com/qdm12/gluetun
 
 ### Configuration
@@ -12,8 +14,14 @@ Check the required config variables for your VPN provider. See: https://github.c
 
 ## qBitTorrent
 
+Used for downloading torrents
+
 - Website: https://www.qbittorrent.org/
 - Docker image: https://docs.linuxserver.io/images/docker-qbittorrent/
+
+### Application ports
+
+- Web: 8080
 
 ### Default credentials
 
@@ -22,75 +30,84 @@ Check the required config variables for your VPN provider. See: https://github.c
 | Username | admin      |
 | Password | adminadmin |
 
-
 ## Prowlarr
+
+Used for managing indexers
 
 - Website: https://prowlarr.com/
 - Github: https://github.com/Prowlarr/Prowlarr
 - Docker image: https://docs.linuxserver.io/images/docker-prowlarr/
 
-### Notes
+### Application ports
 
-- Use `localhost:6010` as host and port when adding qBitTorrent
+- Web: 9696
 
 ## Radarr
+
+Used for managing movies
 
 - Website: https://radarr.video/
 - Github: https://github.com/Radarr/Radarr
 - Docker image: https://docs.linuxserver.io/images/docker-radarr/
 
-### Notes
+### Application ports
 
-- Use `localhost:6010` as host and port when adding qBitTorrent
-
-### Notes
-
-- Use `localhost:6010` as host and port when adding qBitTorrent
+- Web: 7878
 
 ## Sonarr
+
+User for managing tv shows
 
 - Website: https://sonarr.tv/
 - Github: https://github.com/Sonarr/Sonarr
 - Docker image: https://docs.linuxserver.io/images/docker-sonarr/
 
-### Notes
+### Application ports
 
-- Use `localhost:6010` as host and port when adding qBitTorrent
+- Web: 8989
 
 ## Readarr
+
+Used for managing e-books
 
 - Website: https://readarr.com/
 - Github: https://github.com/Readarr/Readarr
 - Docker image: https://docs.linuxserver.io/images/docker-readarr/
 
+### Application ports
+
+- Web: 8787
+
 ## Bazarr
+
+Used for managing subtitles
 
 - Website: https://www.bazarr.media/
 - Github: https://github.com/morpheus65535/bazarr
 - Docker image: https://docs.linuxserver.io/images/docker-bazarr/
 
-## Metube
+### Application ports
 
-- Github: https://github.com/alexta69/metube
+- Web: 6767
 
-### Watching YouTube videos in Jellyfin
+## FlareSolverr
 
-Install Jellyfin YouTube Metadata plugin for Jellyfin. See: https://github.com/ankenyr/jellyfin-youtube-metadata-plugin#installing-from-repository-recommended
+Used for bypassing Cloudflare
 
-## Podgrab
-
-- Github: https://github.com/akhilrex/podgrab
+- Github: https://github.com/FlareSolverr/FlareSolverr
 
 ## Jellyseerr
 
+Used for requesting media via Radarr and Sonarr
+
 - Github: https://github.com/Fallenbagel/jellyseerr
+
+### Application ports
+
+- Web: 5055
 
 ### Notes
 
 - Use `http://jellyfin:8096` as url for Jellyfin
 - Use `http://gluetun:7878` as url for Radarr
 - use `http://gluetun:8989` as url for Sonarr
-
-## FlareSolverr
-
-- Github: https://github.com/FlareSolverr/FlareSolverr

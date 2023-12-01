@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  metube:
+    container_name: metube
+    image: ghcr.io/alexta69/metube
+
+    env_file:
+      - ../.env
+      - .env
+
+    environment:
+      - UID=${PUID}
+      - GID=${PGID}
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/metube:/config
+      - ${STORAGE_LOCATION}/media/downloaded/metube:/downloads
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped

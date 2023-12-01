@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  nextcloud:
+    container_name: nextcloud
+    image: lscr.io/linuxserver/nextcloud:latest
+
+    env_file:
+      - ../.env
+      - .env
+      - .nextcloud.env
+
+    depends_on:
+      - nextcloud-db
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/nextcloud:/config
+      - ${STORAGE_LOCATION}/nextcloud:/data
+
+    devices:
+      - /dev/dri:/dev/dri
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped
+
+  nextcloud-db:
+    container_name: nextcloud-db
+    image: lscr.io/linuxserver/mariadb:latest
+
+    env_file:
+      - ../.env
+      - .env
+
+    volumes:
+      - ${DOCKER_DATA_LOCATION}/nextcloud-db:/config
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+    restart: unless-stopped
