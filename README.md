@@ -11,7 +11,7 @@ Collection of Docker Compose files to easily install and manage your homelab. Th
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/mealie.png" width="24" /> Mealie                 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prowlarr.png" width="24" /> Prowlarr*    | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/qbittorrent.png" width="24" /> qBitTorrent*                |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/nextcloud.png" width="24" /> Nextcloud           | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/radarr.png" width="24" /> Radarr*        | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/uptime-kuma.png" width="24" /> Uptime Kuma                 |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/homebox.png" width="24" /> Homebox               | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sonarr.png" width="24" /> Sonarr*        | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/gluetun.png" width="24" /> Gluetun                         |
-|                                                                                                                      | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bazarr.png" width="24" /> Bazarr*        | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cloudflare.png" width="24" /> CloudFlare DDNS              |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/immich.png" width="24" /> Immich                 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bazarr.png" width="24" /> Bazarr*        | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cloudflare.png" width="24" /> CloudFlare DDNS              |
 |                                                                                                                      | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/readarr.png" width="24" /> Readarr*      | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/duplicati.png" width="24" /> Duplicati                     |
 |                                                                                                                      | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/metube.png" width="24" /> Metube         | Docker Volume Backup                                                                                                           |
 |                                                                                                                      | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/podgrab.png" width="24" /> Podgrab       | FlareSolverr                                                                                                                   |
@@ -43,6 +43,7 @@ Disclaimer: these containers are only used for managing legal Linux distro's.
 |      └── duplicati (backups by duplicati)
 └── /mnt/storage (media storage)
    ├── nextcloud
+   ├── photos
    ├── downloads
    │  ├── books
    │  ├── movies
@@ -83,7 +84,7 @@ The output of this command should be something like `uid=1000(homelabuser) gid=1
 ```shell
 $ sudo mkdir /srv/homelab
 $ cd /srv/homelab
-$ sudo mkdir {actual-budget,duplicati,home-assistant,homebox,homer,jellyfin,mealie,gluetun,qbittorrent,prowlarr,radarr,sonarr,readarr,bazarr,jellyseerr,metube,nextcloud,nextcloud-db,nginx-proxy-manager,podgrab,uptime-kuma}
+$ sudo mkdir {actual-budget,duplicati,home-assistant,homebox,homer,immich-database,immich-machine-learning,immich-machine-learning-gecoding,immich-redis,immich-typesense,jellyfin,mealie,gluetun,qbittorrent,prowlarr,radarr,sonarr,readarr,bazarr,jellyseerr,metube,nextcloud,nextcloud-db,nginx-proxy-manager,podgrab,uptime-kuma}
 ```
 
 ### Change ownership of data and media directories

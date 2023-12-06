@@ -9,6 +9,7 @@ include:
   - ./home-assistant/compose.yaml
   - ./homebox/compose.yaml
   - ./homer/compose.yaml
+  - ./immich/compose.yaml
   - ./jellyfin/compose.yaml
   - ./mealie/compose.yaml
   - ./media-request/compose.yaml
